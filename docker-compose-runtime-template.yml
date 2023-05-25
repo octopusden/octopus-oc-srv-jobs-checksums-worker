@@ -1,0 +1,25 @@
+version: "2.3"
+services:
+  checksums-worker:
+    logging:
+      driver: "syslog"
+      options:
+        tag: "container_checksums-worker-${WORKER_TYPE:-art}_{{.ID}}"
+    restart: always
+    mem_limit: 3g
+    memswap_limit: 4g
+    image: ${DOCKER_REGISTRY_HOST}/si/jobs-checksums_worker:${TAG:-master}
+    environment:
+      - PSQL_URL=${PSQL_URL}
+      - PSQL_USER=${PSQL_USER}
+      - PSQL_PASSWORD=${PSQL_PASSWORD}
+      - PSQL_CNT_USER=${PSQL_CNT_USER}
+      - PSQL_CNT_PASSWORD=${PSQL_CNT_PASSWORD}
+      - PSQL_CNT_URL=${PSQL_CNT_URL}
+      - MVN_URL=${MVN_URL}
+      - MVN_USER=${MVN_USER}
+      - MVN_PASSWORD=${MVN_PASSWORD}
+      - AMQP_URL=${AMQP_URL}
+      - AMQP_USER=${AMQP_USER}
+      - AMQP_PASSWORD=${AMQP_PASSWORD}
+    command: "--reconnect --declare no -vv --queue=${WORKER_QUEUE:-cdt.dlartifacts.input} --schema ${WORKER_TYPE:-art} --remove always --prefetch-count ${WORKER_PREFETCH_COUNT:-4} --max-depth ${WORKER_MAX_DEPTH:-0}"
