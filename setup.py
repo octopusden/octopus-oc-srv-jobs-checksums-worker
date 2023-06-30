@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-__version = "2.0.2"
+__version = "2.0.3"
 
 setup(name="oc-checksums-worker",
         version=__version,
