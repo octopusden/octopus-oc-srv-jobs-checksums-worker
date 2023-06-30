@@ -1,4 +1,4 @@
-Checksums/DLContents worker for registring different artifacts in PSQL database basing on *AMQP* queue messages.
+**Checksums/DLContents** worker for registring different artifacts in PSQL database basing on *AMQP* queue messages.
 
 ## Limitations
 
