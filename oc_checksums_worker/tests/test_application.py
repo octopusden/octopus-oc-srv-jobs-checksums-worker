@@ -364,7 +364,7 @@ class WorkerLogicTest(unittest.TestCase):
         _wrk = QueueWorkerApplicationMock(setup_orm=False, controller=unittest.mock.MagicMock())
         _mvn = unittest.mock.MagicMock()
         _wrk._download(_mvn, "G:A:V:P")
-        _mvn.cat.assert_called_once_with("G:A:V:P", binary=True, write_to=AnyTempFile())
+        _mvn.cat.assert_called_once_with("G:A:V:P", binary=True, stream=True, write_to=AnyTempFile())
 
     def test_check_artifact_not_registered__no_checksum(self):
         _ctrl = unittest.mock.MagicMock()
