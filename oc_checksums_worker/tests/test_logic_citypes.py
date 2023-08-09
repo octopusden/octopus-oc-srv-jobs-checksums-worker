@@ -162,8 +162,10 @@ class RegistrationCiTypesTest(archive_test_case.ArchiveTestCase):
             _gavs.append(_gav)
 
         for _gav in _gavs:
-            self.register(_gav, citype="AWFUL")
             self.check_counters(Files=0, CheckSums=0, Locations=0, HistoricalLocations=0)
-            self.assertIsNone(self.ck_controller.get_file_by_location(_gav, "NXS"))
+            self.register(_gav, citype="AWFUL")
+            self.check_counters(Files=1, CheckSums=1, Locations=1, HistoricalLocations=1)
+            _file = self.ck_controller.get_file_by_location(_gav, "NXS")
+            self.assertEqual(_file.ci_type.code, "FILE")
 
 
