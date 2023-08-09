@@ -238,7 +238,7 @@ class QueueWorkerApplication(ChecksumsQueueServer):
         _result = tempfile.NamedTemporaryFile()
         logging.info("Downloading '%s' to '%s'" % (gav, _result.name))
         try:
-            mvn_client.cat(gav, binary=True, write_to=_result)
+            mvn_client.cat(gav, binary=True, stream=True, write_to=_result)
         except Exception as _e:
             # we have to close tempfile in case of failure due to 'tempfile' module feature
             _result.close()
