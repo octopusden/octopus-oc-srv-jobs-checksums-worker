@@ -41,7 +41,7 @@ class RegistrationCiTypesTest(archive_test_case.ArchiveTestCase):
         # note the count of locations to check - one lower than previous
         self.mvn.create_gav(_gav_zip, include=generate_many_different_gavs(1, p='txt', current=['test:file:0.1:txt']))
         self.register_check(gav=_gav_zip, depth=1)
-        self.check_counters(Files=3, CheckSums=3, Locations=4, HistoricalLocations=3)
+        self.check_counters(Files=3, CheckSums=3, Locations=4, HistoricalLocations=4)
         self.assertEqual(
                 self.ck_controller.get_file_by_checksum(self.mvn.info(_gav_txt).get("md5")).ci_type.code, "FILE")
 
