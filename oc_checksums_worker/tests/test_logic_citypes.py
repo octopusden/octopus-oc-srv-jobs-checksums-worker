@@ -34,7 +34,7 @@ class RegistrationCiTypesTest(archive_test_case.ArchiveTestCase):
         _gav_zip = 'test:archive:0.1:zip'
         self.mvn.create_gav(_gav_txt)
         self.register(gav=_gav_txt, citype="NONEXIST", depth=0)
-        _file = self.ck_controller.get_file_by_location(_gav_txt, "NXS"))
+        _file = self.ck_controller.get_file_by_location(_gav_txt, "NXS")
         self.assertEqual(_file.ci_type.code, "FILE")
 
         # now pack this into an archive, ci_type shuld not be set to 'FILE' while registering an archive
