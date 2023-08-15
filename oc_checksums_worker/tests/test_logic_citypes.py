@@ -34,14 +34,14 @@ class RegistrationCiTypesTest(archive_test_case.ArchiveTestCase):
         _gav_zip = 'test:archive:0.1:zip'
         self.mvn.create_gav(_gav_txt)
         self.register(gav=_gav_txt, citype="NONEXIST", depth=0)
-        self.check_counters(Files=0, CheckSums=0, Locations=0, HistoricalLocations=0)
-        self.assertIsNone(self.ck_controller.get_file_by_location(_gav_txt, "NXS"))
+        _file = self.ck_controller.get_file_by_location(_gav_txt, "NXS")
+        self.assertEqual(_file.ci_type.code, "FILE")
 
         # now pack this into an archive, ci_type shuld not be set to 'FILE' while registering an archive
         # note the count of locations to check - one lower than previous
         self.mvn.create_gav(_gav_zip, include=generate_many_different_gavs(1, p='txt', current=['test:file:0.1:txt']))
         self.register_check(gav=_gav_zip, depth=1)
-        self.check_counters(Files=3, CheckSums=3, Locations=3, HistoricalLocations=3)
+        self.check_counters(Files=3, CheckSums=3, Locations=4, HistoricalLocations=4)
         self.assertEqual(
                 self.ck_controller.get_file_by_checksum(self.mvn.info(_gav_txt).get("md5")).ci_type.code, "FILE")
 
@@ -161,9 +161,13 @@ class RegistrationCiTypesTest(archive_test_case.ArchiveTestCase):
             self.mvn.create_gav(_gav)
             _gavs.append(_gav)
 
+        self.check_counters(Files=0, CheckSums=0, Locations=0, HistoricalLocations=0)
+
         for _gav in _gavs:
             self.register(_gav, citype="AWFUL")
-            self.check_counters(Files=0, CheckSums=0, Locations=0, HistoricalLocations=0)
-            self.assertIsNone(self.ck_controller.get_file_by_location(_gav, "NXS"))
+            # should be registered as 'FILE'
+            # since we have the same file for first 3 cases then counters shoud differ
+            _file = self.ck_controller.get_file_by_location(_gav, "NXS")
+            self.assertEqual(_file.ci_type.code, "FILE")
 
 
