@@ -7,6 +7,7 @@ import argparse
 import logging
 from oc_orm_initializator.orm_initializator import OrmInitializator
 from oc_cdtapi import NexusAPI
+from oc_logging.Logging import setup_logging
 import tempfile
 
 class LocationOverwriteError(Exception):
@@ -37,6 +38,7 @@ class QueueWorkerApplication(ChecksumsQueueServer):
         Details initialization
         :param argparse.Namespace args: parsed command-line arguments
         """
+        setup_logging()
         if args.remove == 'no':
             self.remove = False         # never remove artifacts from DB
         elif args.remove == 'always':

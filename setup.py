@@ -2,7 +2,7 @@
 
 from setuptools import setup
 
-__version = "2.0.5"
+__version = "2.1.0"
 
 setup(name="oc-checksums-worker",
         version=__version,
@@ -14,6 +14,7 @@ setup(name="oc-checksums-worker",
             "oc-checksumsq",
             "oc-delivery-apps >= 11.2.9",
             "oc-orm-initializator",
-            "oc-cdtapi"],
+            "oc-cdtapi",
+            "oc_logging"],
       packages={"oc_checksums_worker"},
       python_requires=">=3.6")
