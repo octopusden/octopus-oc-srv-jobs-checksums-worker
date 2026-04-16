@@ -2,12 +2,12 @@
 
 from setuptools import setup
 
-__version = "2.1.1"
+__version = "3.0.0"
 
 setup(name="oc-checksums-worker",
         version=__version,
-        description="Checksums worker for AMQP queue",
-        long_description="Checksums Django-based worker for AMQP queue",
+        description="Checksums worker for AMQP/postgres queue",
+        long_description="Checksums Django-based worker for AMQP/postgres queue",
         long_description_content_type="text/plain",
         license="Apache2.0",
         install_requires=[
