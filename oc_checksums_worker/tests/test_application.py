@@ -132,7 +132,9 @@ class WorkerLogicTest(unittest.TestCase):
         _prs.add_argument.assert_any_call("--mvn-url", dest="mvn_url", help="MVN URL", default="http://localhost:8081/mvn")
         _prs.add_argument.assert_any_call("--mvn-user", dest="mvn_user", help="MVN user", default=None)
         _prs.add_argument.assert_any_call("--mvn-password", dest="mvn_password", help="MVN password", default=None)
-        self.assertEqual(8, _prs.add_argument.call_count)        
+        _prs.add_argument.assert_any_call("--msg_source", dest="msg_source", help="The source of messages - amqp or db", default=None)
+        _prs.add_argument.assert_any_call("--sleep", dest="sleep", help="Seconds between new messages queries", default="10")
+        self.assertEqual(10, _prs.add_argument.call_count)        
 
     def test_register_file(self):
         _wrk = QueueWorkerApplicationMock(setup_orm=False, controller=unittest.mock.MagicMock())

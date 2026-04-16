@@ -6,15 +6,54 @@ import urllib.parse
 import argparse
 import logging
 from oc_orm_initializator.orm_initializator import OrmInitializator
-from oc_cdtapi import NexusAPI
+from oc_cdtapi import NexusAPI, PgQAPI
 from oc_logging.Logging import setup_logging
 import tempfile
+import time
 
 class LocationOverwriteError(Exception):
     def __init__(self, path):
         super().__init__("Location '%s' was physically overwritten but removing is disabled" % path)
 
 class QueueWorkerApplication(ChecksumsQueueServer):
+
+    def custom_connect(self):
+        logging.debug("Reached custom_connect")
+        self.pgq = PgQAPI.PgQAPI()
+        logging.debug("self.pgq = [%s]", self.pgq)
+
+    def custom_run(self):
+        logging.debug("Reached custom_run")
+        logging.debug("Entering infinite loop")
+        while True:
+            msg = None
+            msg_id = None
+            msg_type = None
+            fl = None
+            citype = None
+            logging.debug("Trying to get message from [%s]", self.queue)
+            ds = self.pgq.new_msg_from_queue(self.queue)
+            if not ds:
+                logging.debug("No new messages, sleeping")
+                time.sleep(10)
+                continue
+            msg, msg_id = ds
+            logging.debug("Fetched message [%s] with id [%s]", msg, msg_id)
+            try:
+                msg_type = msg[0]
+                logging.debug("message type: [%s]", msg_type)
+                fl = msg[1][0][0], msg[1][0][1], msg[1][2]
+                logging.debug("File location: [%s]", fl)
+                citype = msg[1][1]
+                logging.debug("citype is [%s]", citype)
+                if msg_type == "register_file":
+                    logging.debug("executing register_file")
+                    self.register_file(fl, citype)
+            except Exception as e:
+                logging.exception("An exception occured: %s", e)
+                self.pgq.msg_proc_fail(msg_id, str(e))
+            self.pgq.msg_proc_end(msg_id)
+
 
     def __init__(self, *args, **kvargs):
         self.setup_orm = kvargs.pop('setup_orm', True)
@@ -80,6 +119,13 @@ class QueueWorkerApplication(ChecksumsQueueServer):
         self.controller = controllers.CheckSumsController()
         logging.debug("ORM initialization done, controller imported")
 
+        if args.msg_source == "db":
+            logging.debug("MSG_SOURCE is db, replacing connect and run methods")
+            self.connect = self.custom_connect
+            self.run = self.custom_run
+        else:
+            self.pgq = None
+
     def custom_args(self, parser):
         """
         Append specific arguments for this worker
@@ -101,6 +147,8 @@ class QueueWorkerApplication(ChecksumsQueueServer):
                             default=os.getenv("MVN_USER"))
         parser.add_argument("--mvn-password", dest="mvn_password", help="MVN password",
                             default=os.getenv("MVN_PASSWORD"))
+        parser.add_argument("--msg_source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
+        parser.add_argument("--sleep", dest="sleep", help="Seconds between new messages queries", default="10")
 
         return parser
 
@@ -126,7 +174,7 @@ class QueueWorkerApplication(ChecksumsQueueServer):
         :param str parent: not used, added for compatibility with Mongo-based worker
         :param bool artifact_deliverable: not used, added for compatibility with Mongo-based worker
         """
-
+        logging.debug("Reached register_file")
         _loc = FileLocation(*location)
         logging.info("Received registration request for location %s citype=%s depth=%d", str(_loc), citype, depth)
 
