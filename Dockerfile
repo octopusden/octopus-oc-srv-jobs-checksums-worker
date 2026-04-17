@@ -13,9 +13,9 @@ RUN apt-get --quiet --assume-yes update && \
         libpq-dev \
         build-essential \
         libmagic1 && \
-    python3 -m venv /opt/venv
+    python3 -m venv /local/venv
 
-ENV PATH="/opt/venv/bin:$PATH"
+ENV PATH="/local/venv/bin:$PATH"
 
 RUN python3 -m pip install --upgrade pip && \
     python3 -m pip install --upgrade setuptools wheel

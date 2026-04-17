@@ -34,8 +34,8 @@ class QueueWorkerApplication(ChecksumsQueueServer):
             logging.debug("Trying to get message from [%s]", self.queue)
             ds = self.pgq.new_msg_from_queue(self.queue)
             if not ds:
-                logging.debug("No new messages, sleeping")
-                time.sleep(10)
+                logging.debug("No new messages, sleeping [%s]", self.args.sleep)
+                time.sleep(int(self.args.sleep))
                 continue
             msg, msg_id = ds
             logging.debug("Fetched message [%s] with id [%s]", msg, msg_id)
