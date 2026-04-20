@@ -18,8 +18,13 @@
 -   **AMQP_URL, AMQP_USER, AMQP_PASSWORD** - for queue connection (*RabbitMQ* or other *AMQP* implementation)
 -   **MVN_URL, MVN_USER, MVN_PASSWORD** - for maven-like repository connection (*Sontatype Nexus* and *JFrog Artifactory* is currently supported only)
 -   **PSQL_URL, PSQL_USER, PSQL_PASSWORD** - for *PSQL* database connection, used for Django models also.
+-   **PSQL_MQ_URL, PSQL_MQ_USER, PSQL_MQ_PASSWORD** - for *PSQL queues* database connection 
 
 **NOTE**: *PSQL_URL* should contan database schema as a parameter. Format:
 *hostFQDN*:*port*/*instance*?search\_path=*schema*
 Example:
 `db.example.com:5432/test_instance?search_path=test_schema`
+
+## Message examples
+
+    ["register_file", [["com.example.release_notes:test-component:1.1.1:htm", "NXS", null], "RELEASENOTES", 0], {}]

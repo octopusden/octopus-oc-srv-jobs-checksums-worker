@@ -153,7 +153,7 @@ class QueueWorkerApplication(ChecksumsQueueServer):
                             default=os.getenv("MVN_USER"))
         parser.add_argument("--mvn-password", dest="mvn_password", help="MVN password",
                             default=os.getenv("MVN_PASSWORD"))
-        parser.add_argument("--msg_source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
+        parser.add_argument("--msg-source", dest="msg_source", help="The source of messages - amqp or db", default=os.getenv("MSG_SOURCE"))
         parser.add_argument("--sleep", dest="sleep", help="Seconds between new messages queries", default="10")
 
         return parser
