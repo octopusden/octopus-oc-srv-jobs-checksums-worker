@@ -42,13 +42,15 @@ class QueueWorkerApplication(ChecksumsQueueServer):
             try:
                 msg_type = msg[0]
                 logging.debug("message type: [%s]", msg_type)
-                fl = msg[1][0][0], msg[1][0][1], msg[1][2]
-                logging.debug("File location: [%s]", fl)
-                citype = msg[1][1]
-                logging.debug("citype is [%s]", citype)
                 if msg_type == "register_file":
+                    fl = msg[1][0][0], msg[1][0][1], msg[1][2]
+                    logging.debug("File location: [%s]", fl)
+                    citype = msg[1][1]
+                    logging.debug("citype is [%s]", citype)
                     logging.debug("executing register_file")
                     self.register_file(fl, citype)
+                else:
+                    logging.error("unknown msg_type")
             except Exception as e:
                 logging.exception("An exception occured: %s", e)
                 self.pgq.msg_proc_fail(msg_id, str(e))
