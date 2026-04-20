@@ -31,6 +31,7 @@ class QueueWorkerApplication(ChecksumsQueueServer):
             msg_type = None
             fl = None
             citype = None
+            depth = None
             logging.debug("Trying to get message from [%s]", self.queue)
             ds = self.pgq.new_msg_from_queue(self.queue)
             if not ds:
@@ -47,10 +48,13 @@ class QueueWorkerApplication(ChecksumsQueueServer):
                     logging.debug("File location: [%s]", fl)
                     citype = msg[1][1]
                     logging.debug("citype is [%s]", citype)
+                    depth = msg[1][2]
+                    logging.debug("depth is [%s]", depth)
                     logging.debug("executing register_file")
-                    self.register_file(fl, citype)
+                    self.register_file(fl, citype, depth)
                 else:
                     logging.error("unknown msg_type")
+                    self.pgq.msg_proc_fail(msg_id, "unknow msg_type")
             except Exception as e:
                 logging.exception("An exception occured: %s", e)
                 self.pgq.msg_proc_fail(msg_id, str(e))
