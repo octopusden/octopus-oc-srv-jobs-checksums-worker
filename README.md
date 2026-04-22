@@ -27,5 +27,6 @@ Example:
 `db.example.com:5432/test_instance?search_path=test_schema`
 
 ## Message examples
+Message is composed by message producer as [method, \[\*args\], \{\*\*kwargs\}\], e.g.
 
     ["register_file", [["com.example.release_notes:test-component:1.1.1:htm", "NXS", null], "RELEASENOTES", 0], {}]
