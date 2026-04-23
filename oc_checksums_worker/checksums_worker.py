@@ -29,9 +29,8 @@ class QueueWorkerApplication(ChecksumsQueueServer):
             msg = None
             msg_id = None
             msg_type = None
-            fl = None
-            citype = None
-            depth = None
+            args = None
+            kvargs = None
             logging.debug("Trying to get message from [%s]", self.queue)
             ds = self.pgq.new_msg_from_queue(self.queue)
             if not ds:
@@ -39,19 +38,16 @@ class QueueWorkerApplication(ChecksumsQueueServer):
                 time.sleep(int(self.args.sleep))
                 continue
             msg, msg_id = ds
-            logging.debug("Fetched message [%s] with id [%s]", msg, msg_id)
+            logging.info("Fetched message [%s] with id [%s]", msg, msg_id)
             try:
-                msg_type = msg[0]
+                msg_type, args, kvargs = msg
                 logging.debug("message type: [%s]", msg_type)
                 if msg_type == "register_file":
-                    fl = msg[1][0][0], msg[1][0][1], msg[1][2]
-                    logging.debug("File location: [%s]", fl)
-                    citype = msg[1][1]
-                    logging.debug("citype is [%s]", citype)
-                    depth = msg[1][2]
-                    logging.debug("depth is [%s]", depth)
                     logging.debug("executing register_file")
-                    self.register_file(fl, citype, depth)
+                    self.register_file(*args, **kvargs)
+                elif msg_type == "register_checksum":
+                    logging.debug("executing register_checksum")
+                    self.register_checksum(*args, **kvargs)
                 else:
                     logging.error("unknown msg_type")
                     self.pgq.msg_proc_fail(msg_id, "unknow msg_type")
